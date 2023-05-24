@@ -29,6 +29,7 @@ namespace CompetitionResults
 
         static void DisplayResult(int[] _runnersTime, int _totalRunners)
         {
+            Runner[] FinalResult = new Runner[_totalRunners];
             ScoreBoard ScoreBoardRun = new ScoreBoard(_totalRunners);
 
             for (int i = 0; i < _runnersTime.Length; i++)
@@ -36,17 +37,23 @@ namespace CompetitionResults
                 ScoreBoardRun.runners[i] = new Runner(i, _runnersTime[i]);
             }
 
-            ScoreBoardRun.PositionDistribution(ScoreBoardRun.runners);
+            FinalResult = ScoreBoardRun.PositionDistribution(ScoreBoardRun.runners);
+            foreach (var result in FinalResult)
+            {
+                Console.Write(result.Place + " ");
+            }
+            Console.WriteLine();
         }
 
     }
 
     public class Runner
     {
-        public Runner(int _id, int _time, int _place = 0)
+        public Runner(int _id, int _time, int _place = 1)
         {
             ID = _id;
             Time = _time;
+            Place = _place;
         }
         public int ID { get; set; }
         public int Time { get; set; }
@@ -62,20 +69,25 @@ namespace CompetitionResults
 
         public Runner[] runners;
 
-        public void PositionDistribution(Runner[] _runners)
+        public Runner[] PositionDistribution(Runner[] _runners)
         {
             var OrderedRunners = _runners.OrderBy(runner => runner.Time).ToArray();
-            //foreach(var o in OrderedRunners)
-            //{
-            //    Console.WriteLine($"ID бегуна: {o.ID}");
-            //    Console.WriteLine($"Время бегуна: {o.Time}");
-            //}
 
-            for (int i = 0; i < OrderedRunners.Length; i++)
+            for (int i = 0; i < OrderedRunners.Length - 1; i++)
             {
-                //if (OrderedRunners[i].Time )
+                if (OrderedRunners[i].Time == OrderedRunners[i + 1].Time || OrderedRunners[i].Time + 1 == OrderedRunners[i + 1].Time)
+                {
+                    OrderedRunners[i + 1].Place = OrderedRunners[i].Place;
+                }
+                else
+                {
+                    OrderedRunners[i + 1].Place = i + 2;
+                }
             }
 
+            var _finalResult = OrderedRunners.OrderBy(runner => runner.ID).ToArray();
+
+            return _finalResult;
         }
 
     }
